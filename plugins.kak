@@ -22,12 +22,19 @@ bundle-install-hook kak-rainbower %{
 	gcc rc/rainbower.cpp -O2 -o rc/rainbower
 }
 
-bundle kak-tree-sitter "https://git.sr.ht/~hadronized/kak-tree-sitter"
+bundle kak-tree-sitter "https://github.com/jcomcl/kak-tree-sitter" %{
+	nop %sh{ kak-tree-sitter -dks --init $kak_session }
+
+	define-command tree-sitter-debug %{
+	    tree-sitter-shutdown
+	    nop %sh{
+	        newterm kak-tree-sitter --server -vvvvv --init $kak_session
+	    }
+	}
+}
 bundle-install-hook kak-tree-sitter %{
 	cargo install --locked --path kak-tree-sitter --root ${HOME}/.local
-	cargo install --locked --path ktsctl --root ${HOME}/.local
 }
-
 bundle kak-lsp "https://github.com/kak-lsp/kak-lsp" %{
 	set-option global lsp_file_watch_support true
 	lsp-enable
@@ -36,16 +43,6 @@ bundle kak-lsp "https://github.com/kak-lsp/kak-lsp" %{
 	map global user r ':lsp-restart<ret>' -docstring 'Restart LSP'
 
 	map global insert <tab> '<a-;>:try lsp-snippets-select-next-placeholders catch %{ execute-keys -with-hooks <lt>tab> }<ret>' -docstring 'Select next snippet placeholder'
-
-	map global object a '<a-semicolon>lsp-object<ret>' -docstring 'LSP any symbol'
-	map global object <a-a> '<a-semicolon>lsp-object<ret>' -docstring 'LSP any symbol'
-	map global object f '<a-semicolon>lsp-object Function Method<ret>' -docstring 'LSP function or method'
-	map global object t '<a-semicolon>lsp-object Class Interface Struct<ret>' -docstring 'LSP class interface or struct'
-	map global object d '<a-semicolon>lsp-diagnostic-object --include-warnings<ret>' -docstring 'LSP errors and warnings'
-	map global object D '<a-semicolon>lsp-diagnostic-object<ret>' -docstring 'LSP errors'
-
-	#hook global WinCreate .*\.gd '%{hook window NormalIdle lsp-restart}'
-
 }
 bundle-install-hook kak-lsp %{
 	cargo install --locked --path . --root ${HOME}/.local
