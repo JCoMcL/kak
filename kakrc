@@ -31,8 +31,17 @@ plug "natasky/kakoune-multi-file"
 
 plug 'delapouite/kakoune-auto-percent'
 
-plug 'crizan/kak-rainbower' config %{
-    rainbower-compile
+plug 'crizan/kak-rainbower' do %{
+    gcc rc/rainbower.cpp -O2 -o rc/rainbower
+} config %{
     hook global WinCreate .* rainbow-enable-window
 }
 
+plug "kak-lsp/kak-lsp" do %{
+    cargo install --locked --force --path .
+    # optional: if you want to use specific language servers
+    mkdir -p ~/.config/kak-lsp
+    cp -n kak-lsp.toml ~/.config/kak-lsp/
+}
+
+plug "andreyorst/smarttab.kak"
