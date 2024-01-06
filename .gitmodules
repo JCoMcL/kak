@@ -1,0 +1,3 @@
+[submodule "autoload/bundle"]
+	path = autoload/bundle
+	url = https://github.com/jdugan6240/kak-bundle.git
