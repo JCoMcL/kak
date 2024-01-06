@@ -1,3 +1,4 @@
 plugins
 *.disabled
 bundle
+.*.kak.*

@@ -6,11 +6,11 @@ bundle kakoune-vertical-selection "https://github.com/occivink/kakoune-vertical-
 bundle kakoune-text-objects "https://github.com/Delapouite/kakoune-text-objects"
 bundle kakoune-multi-file "https://github.com/natasky/kakoune-multi-file"
 
-bundle kakoune-auto-percent" "https://github.com/delapouite/kakoune-auto-percent" %{
+bundle kakoune-auto-percent" "https://github.com/delapouite/kakoune-auto-percent" 
+
+bundle kak-rainbower "https://github.com/crizan/kak-rainbower" %{
 	hook global WinCreate .* rainbow-enable-window
 }
-
-bundle kak-rainbower "https://github.com/crizan/kak-rainbower"
 bundle-install-hook kak-rainbower %{
 	gcc rc/rainbower.cpp -O2 -o rc/rainbower
 }
@@ -23,10 +23,9 @@ bundle-install-hook kak-tree-sitter %{
 
 bundle smarttab.kak "https://github.com/andreyorst/smarttab.kak"
 
-bundle tabs.kak "https://github.com/enricozb/tabs.kak"
-bundle-install-hook tabs.kak %{
-	cargo install --locked --path . --root ${HOME}/.local
-}
+# bundle tabs.kak "https://github.com/enricozb/tabs.kak"
+## bundle-install-hook tabs.kak %{ ## cargo install --locked --path . --root ${HOME}/.local
+## }
 
 bundle kak-lsp "https://github.com/kak-lsp/kak-lsp"
 bundle-install-hook kak-lsp %{
@@ -39,6 +38,5 @@ bundle-install-hook kak-lsp %{
 bundle kak-dap "https://github.com/jdugan6240/kak-dap"
 bundle-install-hook kak-dap %{
 	cargo install --locked --path . --root ${HOME}/.local
-
 }
 
