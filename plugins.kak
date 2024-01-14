@@ -1,4 +1,4 @@
-bundle kakboard" "https://github.com/lePerdu/kakboard" %{
+bundle kakboard "https://github.com/lePerdu/kakboard" %{
 	hook global WinCreate .* %{ kakboard-enable }
 }
 
@@ -6,7 +6,7 @@ bundle kakoune-vertical-selection "https://github.com/occivink/kakoune-vertical-
 bundle kakoune-text-objects "https://github.com/Delapouite/kakoune-text-objects"
 bundle kakoune-multi-file "https://github.com/natasky/kakoune-multi-file"
 
-bundle kakoune-auto-percent" "https://github.com/delapouite/kakoune-auto-percent" 
+bundle kakoune-auto-percent "https://github.com/delapouite/kakoune-auto-percent" 
 
 bundle kak-rainbower "https://github.com/crizan/kak-rainbower" %{
 	hook global WinCreate .* rainbow-enable-window
