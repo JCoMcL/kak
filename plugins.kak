@@ -4,7 +4,7 @@ bundle kakboard "https://github.com/lePerdu/kakboard" %{
 
 bundle kakoune-vertical-selection "https://github.com/occivink/kakoune-vertical-selection"
 bundle kakoune-text-objects "https://github.com/Delapouite/kakoune-text-objects"
-bundle kakoune-multi-file "https://github.com/natasky/kakoune-multi-file"
+#bundle kakoune-multi-file "https://github.com/natasky/kakoune-multi-file"
 
 bundle kakoune-auto-percent "https://github.com/delapouite/kakoune-auto-percent" 
 
@@ -21,13 +21,18 @@ bundle-install-hook kak-tree-sitter %{
 	cargo install --locked --path ktsctl --root ${HOME}/.local
 }
 
-bundle smarttab.kak "https://github.com/andreyorst/smarttab.kak"
+bundle smarttab.kak "https://github.com/andreyorst/smarttab.kak" %{
+	hook global BufCreate .* smarttab
+}
 
 # bundle tabs.kak "https://github.com/enricozb/tabs.kak"
 ## bundle-install-hook tabs.kak %{ ## cargo install --locked --path . --root ${HOME}/.local
 ## }
 
-bundle kak-lsp "https://github.com/kak-lsp/kak-lsp"
+bundle kak-lsp "https://github.com/kak-lsp/kak-lsp" %{
+	lsp-enable
+	lsp-auto-hover-enable
+}
 bundle-install-hook kak-lsp %{
 	cargo install --locked --path . --root ${HOME}/.local
 	# optional: if you want to use specific language servers

@@ -2,3 +2,4 @@ plugins
 *.disabled
 bundle
 .*.kak.*
+benchmarks
