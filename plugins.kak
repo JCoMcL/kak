@@ -4,9 +4,8 @@ bundle kakboard "https://github.com/lePerdu/kakboard" %{
 
 bundle kakoune-vertical-selection "https://github.com/occivink/kakoune-vertical-selection"
 bundle kakoune-text-objects "https://github.com/Delapouite/kakoune-text-objects"
-#bundle kakoune-multi-file "https://github.com/natasky/kakoune-multi-file"
-
 bundle kakoune-auto-percent "https://github.com/delapouite/kakoune-auto-percent" 
+#bundle kakoune-multi-file "https://github.com/natasky/kakoune-multi-file"
 
 bundle kak-rainbower "https://github.com/crizan/kak-rainbower" %{
 	hook global WinCreate .* rainbow-enable-window
@@ -19,10 +18,6 @@ bundle kak-tree-sitter "https://github.com/phaazon/kak-tree-sitter"
 bundle-install-hook kak-tree-sitter %{
 	cargo install --locked --path kak-tree-sitter --root ${HOME}/.local
 	cargo install --locked --path ktsctl --root ${HOME}/.local
-}
-
-bundle smarttab.kak "https://github.com/andreyorst/smarttab.kak" %{
-	hook global BufCreate .* smarttab
 }
 
 # bundle tabs.kak "https://github.com/enricozb/tabs.kak"
