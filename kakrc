@@ -17,7 +17,7 @@ define-command bufrun 'echo %sh{
 }'
 map global normal <F5> ':bufrun<ret>'
 
-hook global WinCreate .*\.gd %{
+hook global BufCreate .*\.gd %{
     set-option buffer bufrunner_window 'newterm'
     set-option buffer bufrunner godot
 }
