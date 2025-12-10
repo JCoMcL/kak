@@ -10,7 +10,7 @@ face global function "%opt(green_light)"
 face global string bright-yellow
 face global keyword %opt(cyan_bright)
 face global operator %opt{yellow_dark}
-face global attribute "%opt(cyan_dark)+bd"
+face global attribute "%opt(blue_bright)+bd"
 face global comment red+i
 face global documentation comment
 face global meta blue

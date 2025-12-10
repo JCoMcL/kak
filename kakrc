@@ -19,7 +19,17 @@ map global normal <F5> ':bufrun<ret>'
 
 hook global BufCreate .*\.gd %{
     set-option buffer bufrunner_window 'newterm'
-    set-option buffer bufrunner godot
+    set-option buffer bufrunner 'godot -u'
+}
+hook global BufCreate .*\.html %{
+    set-option buffer bufrunner_window ''
+    set-option buffer bufrunner %sh{echo $BROWSER}
+}
+hook global BufCreate .*\.py %{
+    set-option buffer bufrunner 'python'
+}
+hook global BufCreate .*\.c %{
+    set-option buffer bufrunner 'ccr'
 }
 
 source "%val{config}/plugins.kak"
