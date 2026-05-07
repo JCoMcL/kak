@@ -10,6 +10,16 @@ map global insert <c-s> '<esc>:write-all<ret>'
 map global normal <c-x> ':write-all;quit<ret>'
 map global insert <c-x> '<a-;>:write-all;quit<ret>'
 
+map global user t ':nop %sh{newterm}<ret>'
+map global user f ':nop %sh{newterm lf}<ret>'
+
+define-command xdg-open -params 1 'echo %sh{
+    xdg-open $@
+}'
+
+map global user o ':xdg-open %val{selection}'
+
+# Bufrun
 declare-option str bufrunner_window 'newterm holder'
 declare-option str bufrunner
 define-command bufrun 'echo %sh{
@@ -19,7 +29,7 @@ map global normal <F5> ':bufrun<ret>'
 
 hook global BufCreate .*\.gd %{
     set-option buffer bufrunner_window 'newterm'
-    set-option buffer bufrunner 'godot -u'
+    set-option buffer bufrunner 'project-root godot'
 }
 hook global BufCreate .*\.html %{
     set-option buffer bufrunner_window ''

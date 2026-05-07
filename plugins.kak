@@ -1,5 +1,6 @@
 bundle kakboard "https://github.com/lePerdu/kakboard" %{
 	hook global WinCreate .* %{ kakboard-enable }
+	set global kakboard_copy_keys 'y' 'd'
 }
 
 bundle kakoune-vertical-selection "https://github.com/occivink/kakoune-vertical-selection"
@@ -7,16 +8,21 @@ bundle kakoune-text-objects "https://github.com/Delapouite/kakoune-text-objects"
 bundle kakoune-auto-percent "https://github.com/delapouite/kakoune-auto-percent" 
 bundle kakoune-auto-star "https://github.com/delapouite/kakoune-auto-star" 
 bundle kakoune-sudo-write "https://github.com/occivink/kakoune-sudo-write.git"
-bundle kak-inc-dec "https://gitlab.com/Screwtapello/kakoune-inc-dec.git"
+
+bundle inc-dec "https://gitlab.com/Screwtapello/kakoune-inc-dec.git" %{
+	map global normal = ': inc-dec-modify-numbers + %val{count}<ret>'
+	map global normal <minus> ': inc-dec-modify-numbers - %val{count}<ret>'
+}
 
 bundle kak-rainbower "https://github.com/crizan/kak-rainbower" %{
 	hook global WinCreate .* rainbow-enable-window
+	set global rainbow_mode 0
 }
 bundle-install-hook kak-rainbower %{
 	gcc rc/rainbower.cpp -O2 -o rc/rainbower
 }
 
-bundle kak-tree-sitter "https://git.sr.ht/~hardonized/kak-tree-sitter"
+bundle kak-tree-sitter "https://git.sr.ht/~hadronized/kak-tree-sitter"
 bundle-install-hook kak-tree-sitter %{
 	cargo install --locked --path kak-tree-sitter --root ${HOME}/.local
 	cargo install --locked --path ktsctl --root ${HOME}/.local
