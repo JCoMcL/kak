@@ -16,11 +16,11 @@ define-command wezterm-terminal-impl -hidden -params 2.. %{
 }
 
 define-command wezterm-terminal-vertical -params 1.. -docstring '
-wezterm-terminal-vertical <program> [<arguments>] [<arguments>]: create a new terminal as a wezterm pane
+wezterm-terminal-vertical <program> [<arguments>]: create a new terminal as a wezterm pane
 The current pane is split into two, top and bottom
 The program passed as argument will be executed in the new terminal' \
 %{
-    wezterm-terminal-impl split-pane --cwd "%val{client_env_PWD}" --bottom -- %arg{@}
+    wezterm-terminal-impl split-pane --cwd "%val{client_env_PWD}" --bottom --pane-id "%val{client_env_WEZTERM_PANE}" -- %arg{@}
 }
 complete-command wezterm-terminal-vertical shell
 
@@ -29,7 +29,7 @@ wezterm-terminal-horizontal <program> [<arguments>]: create a new terminal as a 
 The current pane is split into two, left and right
 The program passed as argument will be executed in the new terminal' \
 %{
-    wezterm-terminal-impl split-pane --cwd "%val{client_env_PWD}" --right -- %arg{@}
+    wezterm-terminal-impl split-pane --cwd "%val{client_env_PWD}" --right --pane-id "%val{client_env_WEZTERM_PANE}" -- %arg{@}
 }
 complete-command wezterm-terminal-horizontal shell
 
@@ -37,7 +37,7 @@ define-command wezterm-terminal-tab -params 1.. -docstring '
 wezterm-terminal-tab <program> [<arguments>]: create a new terminal as a wezterm tab
 The program passed as argument will be executed in the new terminal' \
 %{
-    wezterm-terminal-impl spawn --cwd "%val{client_env_PWD}" -- %arg{@}
+    wezterm-terminal-impl spawn --cwd "%val{client_env_PWD}" --pane-id "%val{client_env_WEZTERM_PANE}" -- %arg{@}
 }
 complete-command wezterm-terminal-tab shell
 
@@ -45,7 +45,7 @@ define-command wezterm-terminal-window -params 1.. -docstring '
 wezterm-terminal-window <program> [<arguments>]: create a new terminal as a wezterm window
 The program passed as argument will be executed in the new terminal' \
 %{
-    wezterm-terminal-impl spawn --cwd "%val{client_env_PWD}" --new-window -- %arg{@}
+    wezterm-terminal-impl spawn --cwd "%val{client_env_PWD}" --new-window --pane-id "%val{client_env_WEZTERM_PANE}" -- %arg{@}
 }
 complete-command wezterm-terminal-window shell
 
@@ -66,6 +66,5 @@ If no client is passed then the current one is used' \
 complete-command -menu wezterm-focus client
 
 alias global focus wezterm-focus
-alias global terminal wezterm-terminal-vertical
 
 }

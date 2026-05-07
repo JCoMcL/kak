@@ -50,7 +50,9 @@ add-highlighter shared/go/single_string region "'" (?<!\\)(\\\\)*' fill string
 add-highlighter shared/go/comment region /\* \*/ fill comment
 add-highlighter shared/go/comment_line region '//' $ fill comment
 
-add-highlighter shared/go/code/ regex %{-?([0-9]*\.(?!0[xX]))?\b([0-9]+|0[xX][0-9a-fA-F]+)\.?([eE][+-]?[0-9]+)?i?\b} 0:value
+add-highlighter shared/go/code/numeric regex %{-?([0-9]*\.(?!0[xX]))?\b([0-9]+|0[xX][0-9a-fA-F]+)\.?([eE][+-]?[0-9]+)?i?\b} 0:value
+add-highlighter shared/go/code/function regex "\b(\w*)\b\h*(?:\[[\w\s\.,]*\])?\h*\(" 1:function
+add-highlighter shared/go/code/operator regex "(\+|-|\*|/|%|\+\+|--|\+=|-=|\*=|/=|%=|==|!=|>|<|>=|<=|&|&&|\|\||!|<-|:=|\.\.\.)" 1:operator
 
 evaluate-commands %sh{
     # Grammar
@@ -69,12 +71,11 @@ evaluate-commands %sh{
 
     # Highlight keywords
     printf %s "
-        add-highlighter shared/go/code/ regex \b($(join "${keywords}" '|'))\b 0:keyword
-        add-highlighter shared/go/code/ regex \b($(join "${attributes}" '|'))\b 0:attribute
-        add-highlighter shared/go/code/ regex \b($(join "${types}" '|'))\b 0:type
-        add-highlighter shared/go/code/ regex \b($(join "${values}" '|'))\b 0:value
-        add-highlighter shared/go/code/ regex \b($(join "${functions}" '|'))\b 0:builtin
-        add-highlighter shared/go/code/ regex := 0:attribute
+        add-highlighter shared/go/code/keyword   regex \b($(join "${keywords}" '|'))\b 0:keyword
+        add-highlighter shared/go/code/attribute regex \b($(join "${attributes}" '|'))\b 0:attribute
+        add-highlighter shared/go/code/type      regex \b($(join "${types}" '|'))\b 0:type
+        add-highlighter shared/go/code/value     regex \b($(join "${values}" '|'))\b 0:value
+        add-highlighter shared/go/code/builtin   regex \b($(join "${functions}" '|'))\b 0:builtin
     "
 }
 
@@ -104,20 +105,20 @@ define-command -hidden go-indent-on-new-line %~
         try %{ execute-keys -draft <semicolon>K<a-&> }
         # cleanup trailing white spaces on the previous line
         try %{ execute-keys -draft kx s \h+$ <ret>d }
-        try %{
+        try %<
             try %{ # line comment
                 execute-keys -draft kx s ^\h*// <ret>
             } catch %{ # block comment
                 execute-keys -draft <a-?> /\* <ret> <a-K>\*/<ret>
             }
-        } catch %{
+        > catch %<
             # indent after lines with an unclosed { or (
             try %< execute-keys -draft [c[({],[)}] <ret> <a-k> \A[({][^\n]*\n[^\n]*\n?\z <ret> j<a-gt> >
             # indent after a switch's case/default statements
             try %[ execute-keys -draft kx <a-k> ^\h*(case|default).*:$ <ret> j<a-gt> ]
             # deindent closing brace(s) when after cursor
             try %[ execute-keys -draft x <a-k> ^\h*[})] <ret> gh / [})] <ret> m <a-S> 1<a-&> ]
-        }
+        >
     =
 ~
 
@@ -134,7 +135,15 @@ define-command -hidden go-indent-on-closing-curly-brace %[
 define-command -hidden go-insert-comment-on-new-line %[
     evaluate-commands -no-hooks -draft -itersel %[
         # copy // comments prefix and following white spaces
-        try %{ execute-keys -draft <semicolon><c-s>kx s ^\h*\K/{2,}\h* <ret> y<c-o>P<esc> }
+        try %{
+            execute-keys -draft <semicolon><c-s>kx s ^\h*\K/{2,}\h* <ret> y<c-o>P<esc>
+            # check for empty comments and delete them
+            try %{
+                execute-keys kx<a-K>^\h*//+\h*$<ret>
+            } catch %{
+                execute-keys Jx_d
+            }
+        }
     ]
 ]
 

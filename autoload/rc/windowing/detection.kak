@@ -23,16 +23,46 @@ declare-option -docstring \
 "Ordered list of windowing modules to try and load. An empty list disables
 both automatic module loading and environment detection, enabling complete
 manual control of the module loading." \
-str-list windowing_modules 'tmux' 'screen' 'zellij' 'kitty' 'iterm' 'sway' 'wayland' 'x11' 'wezterm'
+str-list windowing_modules 'tmux' 'screen' 'zellij' 'kitty' 'iterm' 'appleterminal' 'sway' 'wayland' 'x11' 'wezterm'
+
+declare-option -docstring %{
+    windowing module to use in the 'terminal' command
+} str windowing_module
+
+declare-option -docstring %{
+    where to create new windows in the 'terminal' command.
+
+    Possible values:
+    - "window" (default) - new window
+    - "horizontal" - horizontal split (left/right)
+    - "vertical" - vertical split (top/bottom)
+    - "tab" - new tab besides current window
+} str windowing_placement window
+
+define-command terminal -params 1.. -docstring %{
+    terminal <program> [<arguments>]: create a new terminal using the preferred windowing environment and placement
+
+    This executes "%opt{windowing_module}-terminal-%opt{windowing_placement}" with the given arguments.
+    If the windowing module is 'wayland', 'sway' or 'x11', then the 'termcmd' option is used as terminal program.
+
+    Example usage:
+
+        terminal sh
+        evaluate-commands %{ set local windowing_placement horizontal; terminal sh }
+
+    See also the 'new' command.
+} %{
+    "%opt{windowing_module}-terminal-%opt{windowing_placement}" %arg{@}
+}
+complete-command terminal shell
 
 hook -group windowing global KakBegin .* %{
-
     evaluate-commands %sh{
         set -- ${kak_opt_windowing_modules}
         if [ $# -gt 0 ]; then
             echo 'try %{ '
             while [ $# -ge 1 ]; do
-                echo "require-module ${1} } catch %{ "
+                echo "require-module ${1}; set-option global windowing_module ${1} } catch %{ "
                 shift
             done
             echo "echo -debug 'no windowing module detected' }"

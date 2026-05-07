@@ -126,8 +126,8 @@ define-command -hidden c-family-indent-on-closing-curly-brace %[
         # check if alone on the line and select to opening curly brace
         execute-keys <a-h><a-:><a-k>^\h+\}$<ret>hm
         try %[
-            # in case open curly brace follows a closing paren, extend to opening paren
-            execute-keys -draft <a-f>) <a-k> \A\)\h+\{\z <ret>
+            # in case open curly brace follows a closing paren possibly with qualifiers, extend to opening paren
+            execute-keys -draft <a-f>) <a-k> \A\)(\h+\w+)*\h*\{\z <ret>
             execute-keys <a-F>)M
         ]
         # align to selection start
@@ -137,7 +137,10 @@ define-command -hidden c-family-indent-on-closing-curly-brace %[
 
 define-command -hidden c-family-insert-on-closing-curly-brace %[
     # add a semicolon after a closing brace if part of a class, union or struct definition
-    try %[ execute-keys -itersel -draft hmxBx <a-K>\A[^\n]+\)\h*(\{|$)<ret> <a-k>\A\h*(class|struct|union|enum)<ret> '<a-;>;i;<esc>' ]
+    evaluate-commands -itersel -draft -verbatim try %[
+        execute-keys -draft hmh <a-?>\b(class|struct|union|enum)\b<ret> <a-K>\{<ret> <a-K>\)(\s+\w+)*\s*\z<ret>
+        execute-keys -draft ';i;<esc>'
+    ]
 ]
 
 define-command -hidden c-family-insert-on-newline %[ evaluate-commands -itersel -draft %[
@@ -210,10 +213,10 @@ evaluate-commands %sh{
             add-highlighter shared/$ft/comment region /\\* \\*/ fill comment
             add-highlighter shared/$ft/line_comment region // (?<!\\\\)(?=\\n) fill comment
             add-highlighter shared/$ft/disabled region -recurse "#\\h*if(?:def)?" ^\\h*?#\\h*if\\h+(?:0|FALSE)\\b "#\\h*(?:else|elif|endif)" fill comment
-            add-highlighter shared/$ft/macro region %{^\\h*?\\K#} %{(?<!\\\\)(?=\\n)|(?=//)} group
-
-            add-highlighter shared/$ft/macro/ fill meta
-            add-highlighter shared/$ft/macro/ regex ^\\h*#\\h*include\\h+(\\S*) 1:module
+            add-highlighter shared/$ft/ifdef region %{^\\h*\\K#\\h*(?:define|elif|if)(?=\\h)} %{(?<!\\\\)(?=\\s)|(?=//)} fill meta
+            add-highlighter shared/$ft/macro region %{^\\h*#} %{(?<!\\\\)(?=\\n)|(?=//)} group
+            add-highlighter shared/$ft/macro/ regex ^\\h*(#\\h*\\S*) 1:meta
+            add-highlighter shared/$ft/macro/ regex ^\\h*#\\h*include\\h+(<[^>]*>|"(?:[^"\\\\]|\\\\.)*") 1:module
             add-highlighter shared/$ft/macro/ regex /\\*.*?\\*/ 0:comment
 	EOF
     done
